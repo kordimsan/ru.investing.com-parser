@@ -1,0 +1,14 @@
+<testsuite errors="0" failures="0" hostname="KorDim-Samsung" name="feature.Парсинг ru.investing.com" skipped="0" tests="1" time="11.618257" timestamp="2021-02-15T00:47:15.907964"><testcase classname="feature.Парсинг ru.investing.com" name="Открытие сайта ru.investing.com" status="passed" time="11.618257"><system-out>
+<![CDATA[
+@scenario.begin
+  Scenario: Открытие сайта ru.investing.com
+    Given Запущен драйвер chromedriver ... passed in 1.502s
+    Then Переходим по адресу 'https://ru.investing.com/' ... passed in 8.629s
+    Then Переходим в меню 'Акции' ... passed in 0.774s
+    Then Переходим в меню 'Россия' ... passed in 0.679s
+    Then Проверяем заголовок по имени 'Россия - акции' ... passed in 0.034s
+
+@scenario.end
+--------------------------------------------------------------------------------
+]]>
+</system-out></testcase></testsuite>
