@@ -50,7 +50,7 @@ class InvestingParse():
         raise TextNotFound("Не найден заголовок '{name}'")
     return True
 
-  def get_prices(self):
+  def get_report(self):
     self._get_menu('Акции')
     self._get_menu('Россия')
     if self._is_target('Россия - акции'):

@@ -22,7 +22,7 @@ def step(context, name):
 
 @then("Получаем таблицу с котировками с сайта")
 def step(context):
-    context.data = context.browser.get_prices()
+    context.data = context.browser.get_report()
 
 @then("Получаем таблицу с котировками из базы '{base_path}'")
 def step(context, base_path):
