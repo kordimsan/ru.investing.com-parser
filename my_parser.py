@@ -35,8 +35,10 @@ class InvestingParse():
   _option = webdriver.ChromeOptions()
   _option.add_experimental_option('prefs', {'profile.default_content_setting_values': {'images':2, 'javascript':2}})
 
-  def __init__(self, url) -> None:
-    self.browser = webdriver.Safari()
+  def __init__(self) -> None:
+    self.browser = webdriver.Chrome('C:\chromedriver.exe', options=self._option)
+    
+  def _request_get(self, url: str):
     self.browser.get(url)
 
   def _get_menu(self, text: str):
@@ -61,3 +63,24 @@ class InvestingParse():
           if tds: 
               data.append((tds[1].text,tds[2].text))
       return [(a,float_de_de(b)) for a,b in data]
+  
+  def get_instrument_url(self, instrument_name: str):
+    self._get_menu('Акции')
+    self._get_menu('Россия')
+    if self._is_target('Россия - акции'):
+      elements = self.browser.find_elements_by_xpath("//table[@id='cross_rate_markets_stocks_1']//tbody//tr")
+      data = []
+      for tr in elements:
+          tds = tr.find_elements_by_tag_name('td')
+          if tds: 
+              data.append((tds[1].text,tds[1].find_elements_by_tag_name('a')[0].get_attribute('href')))
+      return dict(data).get(instrument_name)
+
+  def get_div_percent(self, indicator: str):
+    elements = self.browser.find_elements_by_xpath("//*[@id='leftColumn']//div[@class='inlineblock']")
+    for elm in elements:
+        spn1 = elm.find_elements_by_class_name('float_lang_base_1')
+        spn2 = elm.find_elements_by_class_name('float_lang_base_2')
+        if spn1 and spn2:
+            if spn1[0].text == indicator: 
+                return spn2[0].text.split('(')[1][:-1]
