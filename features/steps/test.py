@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import locale
+import sqlite3
 import time
 from behave import *
 from selenium import webdriver
@@ -12,6 +13,26 @@ option.add_experimental_option('prefs', prefs)
 
 class TextNotFound(Exception):
     pass
+
+def read_sqlite_table(base_path):
+    try:
+        sqlite_connection= sqlite3.connect(base_path, timeout=20)
+        cursor = sqlite_connection.cursor()
+        print("Подключен к SQLite")
+
+        sqlite_select_query = """SELECT * from stock_price"""
+        cursor.execute(sqlite_select_query)
+        rows = cursor.fetchall()
+        return rows
+        cursor.close()
+
+    except sqlite3.Error as error:
+        print("Ошибка при подключении к sqlite", error)
+    finally:
+        if (sqlite_connection):
+            sqlite_connection.close()
+            print("Соединение с SQLite закрыто")
+
 
 @given('Запущен драйвер chromedriver')
 def step(context):
@@ -42,3 +63,8 @@ def step(context):
         if tds: 
             data.append((tds[1].text,tds[2].text))
     context.data = [(a,locale.atof(b)) for a,b in data]
+
+@then("Получаем таблицу с котировками из базы '{base_path}'")
+def step(context, base_path):
+    stock_price = read_sqlite_table(base_path)
+    context.stock_price = [(a,locale.atof(b)) for a,b in stock_price]
