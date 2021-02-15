@@ -7,5 +7,5 @@ if __name__ == '__main__':
   data = InvestingParse('https://ru.investing.com/').get_report()
   per = 50
   result = [(a,b,dict(stock_price).get(a)) for a, b in data if (b/dict(stock_price).get(a,b)-1)*100 >= int(per)]
-  with open('result.json', 'w') as f:
-    json.dump(result, f)
+  with open('report.json', 'w', encoding='utf8') as f:
+    json.dump(result, f, ensure_ascii=False,indent=2)
