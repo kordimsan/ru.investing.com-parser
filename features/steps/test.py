@@ -2,6 +2,8 @@
 import locale
 import sqlite3
 import time
+from pprint import pprint
+
 from behave import *
 from selenium import webdriver
 
@@ -68,3 +70,8 @@ def step(context):
 def step(context, base_path):
     stock_price = read_sqlite_table(base_path)
     context.stock_price = [(a,locale.atof(b)) for a,b in stock_price]
+
+@then("Получаем таблицу котировок цена которых изменилась на {per}%")
+def step(context, per):
+    result = [(a,b,dict(context.stock_price).get(a)) for a, b in context.data if (b/dict(context.stock_price).get(a,b)-1)*100 >= int(per)]
+    pprint(result)
