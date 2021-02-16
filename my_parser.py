@@ -9,8 +9,6 @@ from selenium import webdriver
 def float_de_de(str: str) -> float:
   return float(str.replace('.','').replace(',','.'))
 
-class TextNotFound(Exception):
-    pass
 
 def read_sqlite_table(base_path):
     try:
@@ -30,6 +28,7 @@ def read_sqlite_table(base_path):
         if (sqlite_connection):
             sqlite_connection.close()
             print("Соединение с SQLite закрыто")
+
 
 class InvestingParse():
   _option = webdriver.ChromeOptions()
@@ -52,29 +51,27 @@ class InvestingParse():
         raise TextNotFound("Не найден заголовок '{name}'")
     return True
 
-  def get_report(self):
+  def _get_reports(self):
     self._get_menu('Акции')
     self._get_menu('Россия')
     if self._is_target('Россия - акции'):
       elements = self.browser.find_elements_by_xpath("//table[@id='cross_rate_markets_stocks_1']//tbody//tr")
-      data = []
       for tr in elements:
-          tds = tr.find_elements_by_tag_name('td')
-          if tds: 
-              data.append((tds[1].text,tds[2].text))
-      return [(a,float_de_de(b)) for a,b in data]
-  
+        tds = tr.find_elements_by_tag_name('td')
+        if tds: 
+          yield tds
+                
+  def get_first_report(self):
+    data = []
+    for tds in self._get_reports():
+      data.append((tds[1].text,tds[2].text))
+    return [(a,float_de_de(b)) for a,b in data]
+
   def get_instrument_url(self, instrument_name: str):
-    self._get_menu('Акции')
-    self._get_menu('Россия')
-    if self._is_target('Россия - акции'):
-      elements = self.browser.find_elements_by_xpath("//table[@id='cross_rate_markets_stocks_1']//tbody//tr")
-      data = []
-      for tr in elements:
-          tds = tr.find_elements_by_tag_name('td')
-          if tds: 
-              data.append((tds[1].text,tds[1].find_elements_by_tag_name('a')[0].get_attribute('href')))
-      return dict(data).get(instrument_name)
+    data = []
+    for tds in self._get_reports():
+      data.append((tds[1].text,tds[1].find_elements_by_tag_name('a')[0].get_attribute('href')))
+    return dict(data).get(instrument_name)
 
   def get_div_percent(self, indicator: str):
     elements = self.browser.find_elements_by_xpath("//*[@id='leftColumn']//div[@class='inlineblock']")

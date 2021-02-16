@@ -4,8 +4,9 @@ import json
 
 if __name__ == '__main__':
   stock_price = read_sqlite_table('stocks')
-  browser = InvestingParse()._request_get('https://ru.investing.com/'):
-  data = browser.get_report()
+  browser = InvestingParse()
+  browser._request_get('https://ru.investing.com/')
+  data = browser.get_first_report()
   per = 50
   result = [(a,b,dict(stock_price).get(a)) for a, b in data if (b/dict(stock_price).get(a,b)-1)*100 >= int(per)]
   with open('report.json', 'w', encoding='utf8') as f:
