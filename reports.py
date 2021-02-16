@@ -19,6 +19,7 @@ def resolve_instrument_list(ilst: list):
             per = browser.get_div_percent('Дивиденды')
             result.append((instrument_name,per))
 
+#делим лист на равные куски для запуска в тредах
 def slice_list(lst, n):
     d = len(lst) // n + (len(lst) % n > 0)
     for i in range(0, len(lst), d):
@@ -43,6 +44,7 @@ if __name__ == '__main__':
     for th in threads:
         th.join()
 
+    #TODO нормальный вывод
     pprint(result)
 
 
