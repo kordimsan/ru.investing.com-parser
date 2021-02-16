@@ -9,7 +9,8 @@ class TextNotFound(Exception):
 
 @given("Переходим по адресу '{url}'")
 def step(context, url):
-    context.browser = parser.InvestingParse(url)
+    context.browser = parser.InvestingParse()
+    context.browser._request_get(url)
 
 @then("Переходим в меню '{text}'")
 def step(context, text):
@@ -22,7 +23,7 @@ def step(context, name):
 
 @then("Получаем таблицу с котировками с сайта")
 def step(context):
-    context.data = context.browser.get_report()
+    context.data = context.browser.get_first_report()
 
 @then("Получаем таблицу с котировками из базы '{base_path}'")
 def step(context, base_path):
